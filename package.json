@@ -1,0 +1,16 @@
+{
+  "name": "alarm-api",
+  "version": "1.0.0",
+  "description": "Serverless REST API for alarm",
+  "author": "Fredrik",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.12.0",
+    "serverless-python-requirements": "^4.1.1"
+  },
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {}
+}

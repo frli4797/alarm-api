@@ -1,0 +1,50 @@
+---
+service: alarm-api
+
+frameworkVersion: ">=1.1.0 <2.0.0"
+
+provider:
+  name: aws
+  runtime: python3.6
+  region: us-east-1
+  apiKeys:
+    - ${opt:stage}-alarm-api-key
+
+package:
+  exclude:
+    — secrets.yaml
+
+functions:
+  annexstatus:
+    handler: handler.annex_status
+    events:
+      - http:
+          path: annex
+          method: get
+          cors: true
+          private: true
+    environment:
+      email: ${ssm:email}
+      password: ${ssm:password}
+      siteId: ${ssm:siteId}
+      panelCode: ${ssm:panelCode}
+  annexarm:
+    handler: handler.annex_arm
+    events:
+      - http:
+          path: annex
+          method: put
+          cors: true
+          private: true
+    environment:
+      email: ${ssm:email}
+      password: ${ssm:password}
+      siteId: ${ssm:siteId}
+      panelCode: ${ssm:panelCode}
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
