@@ -12,9 +12,33 @@ lib64/
 parts/
 sdist/
 var/
-*.egg-info/
 .installed.cfg
-*.egg
+
 
 # Serverless directories
 .serverless
+
+
+# Created by .ignore support plugin (hsz.mobi)
+### Python template
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Compiled python modules.
+*.pyc
+
+# Setuptools distribution folder.
+/dist/
+
+# Python egg metadata, regenerated from source files by setuptools.
+/*.egg-info
+*.egg
+
+.gitignore
+.idea/
+/sectoralarm/cookies.jar
+MANIFEST
+build/
+/.pydevproject
+/.project
+node_modules/
