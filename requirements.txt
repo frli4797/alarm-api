@@ -3,5 +3,6 @@ chardet==3.0.4
 idna==2.7
 requests==2.19.1
 urllib3==1.23
+boto3==1.9.20
 git+https://github.com/frli4797/sectoralarm@release
 

@@ -10,12 +10,54 @@ provider:
   timeout: 30
   apiKeys:
     - ${opt:stage}-alarm-api-key
+  environment:
+    TEMP_TABLE: ${self:service}-${opt:stage, self:provider.stage}-temperatures
+  iamRoleStatements:
+  - Effect: Allow
+    Action:
+    - dynamodb:Query
+    - dynamodb:Scan
+    - dynamodb:GetItem
+    - dynamodb:PutItem
+    - dynamodb:UpdateItem
+    - dynamodb:DeleteItem
+    Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.TEMP_TABLE}"
+
 
 package:
   exclude:
     — secrets.yaml
 
 functions:
+
+  alarmtemp:
+    handler: handler.alarm_temp
+    events:
+    - http:
+        path: alarm/temp
+        method: get
+        cors: true
+        private: true
+    environment:
+      email: ${ssm:email}
+      password: ${ssm:password}
+      siteId: ${ssm:siteId}
+      panelCode: ${ssm:panelCode}
+
+  alarmstatus:
+    handler: handler.alarm_status
+    events:
+    - http:
+        path: alarm
+        method: get
+        cors: true
+        private: true
+    environment:
+      email: ${ssm:email}
+      password: ${ssm:password}
+      siteId: ${ssm:siteId}
+      panelCode: ${ssm:panelCode}
+
   annexstatus:
     handler: handler.annex_status
     events:
@@ -29,6 +71,21 @@ functions:
       password: ${ssm:password}
       siteId: ${ssm:siteId}
       panelCode: ${ssm:panelCode}
+
+  alarmarm:
+    handler: handler.alarm_arm
+    events:
+    - http:
+        path: alarm
+        method: put
+        cors: true
+        private: true
+    environment:
+      email: ${ssm:email}
+      password: ${ssm:password}
+      siteId: ${ssm:siteId}
+      panelCode: ${ssm:panelCode}
+
   annexarm:
     handler: handler.annex_arm
     events:
@@ -42,6 +99,27 @@ functions:
       password: ${ssm:password}
       siteId: ${ssm:siteId}
       panelCode: ${ssm:panelCode}
+
+
+resources:
+  Resources:
+    ReadingsDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.TEMP_TABLE}
+
 
 plugins:
   - serverless-python-requirements

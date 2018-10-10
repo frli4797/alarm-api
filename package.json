@@ -1,16 +1,23 @@
 {
   "name": "alarm-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Serverless REST API for alarm",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/frli4797/alarm-api.git"
+  },
   "author": "Fredrik",
   "license": "MIT",
   "dependencies": {
     "aws-sdk": "^2.12.0",
+    "serverless": "^1.32.0",
     "serverless-python-requirements": "^4.1.1"
   },
   "main": "handler.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "serverless-domain-manager": "^2.6.5"
+  }
 }
