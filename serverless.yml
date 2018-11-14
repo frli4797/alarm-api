@@ -30,8 +30,52 @@ package:
 
 functions:
 
+  savetemps:
+    handler: alarm.temperatures.put_temperatures
+    events:
+    # Invoke Lambda function every minute
+    - schedule: rate(5 minutes)
+    environment:
+      email: ${ssm:email}
+      password: ${ssm:password}
+      siteId: ${ssm:siteId}
+      panelCode: ${ssm:panelCode}
+
+
+  alllasttemps:
+    handler: alarm.temperatures.all_lasttemps
+    events:
+    - http:
+        path: alarm/lasttemp
+        method: get
+        cors: true
+        private: true
+    environment:
+      email: ${ssm:email}
+      password: ${ssm:password}
+      siteId: ${ssm:siteId}
+      panelCode: ${ssm:panelCode}
+
+  lasttemp:
+    handler: alarm.temperatures.lasttemp
+    events:
+    - http:
+        path: alarm/lasttemp/{sensor}
+        method: get
+        request:
+          parameters:
+            paths:
+              sensor: true
+        cors: true
+        private: false
+    environment:
+      email: ${ssm:email}
+      password: ${ssm:password}
+      siteId: ${ssm:siteId}
+      panelCode: ${ssm:panelCode}
+
   alarmtemp:
-    handler: handler.alarm_temp
+    handler: alarm.temperatures.alarm_temp
     events:
     - http:
         path: alarm/temp
@@ -109,12 +153,15 @@ resources:
       Properties:
         AttributeDefinitions:
           -
-            AttributeName: id
+            AttributeName: sensor
             AttributeType: S
+          - AttributeName: timestamp
+            AttributeType: N
         KeySchema:
-          -
-            AttributeName: id
+          - AttributeName: sensor
             KeyType: HASH
+          - AttributeName: timestamp
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
